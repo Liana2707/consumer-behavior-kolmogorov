@@ -30,7 +30,7 @@ def create_dataset(time_series, lzw_depth, forecast_horizon):
     return X, y
 
 
-def calculate_f1_accuracy(y_pred, y_true):
+def calculate_f1_accuracy(x_pred, x_real):
     """Вычисляет F1-меру и точность.
 
     Args:
@@ -40,23 +40,20 @@ def calculate_f1_accuracy(y_pred, y_true):
     Returns:
         Кортеж: (F1-мера, точность). Возвращает (0, 0), если нет положительных предсказаний.
     """
-    y_pred = y_pred.astype(int)
-    y_true = y_true.astype(int)
-
-    tp = np.sum((y_pred == 1) & (y_true == 1))
-    tn = np.sum((y_pred == 0) & (y_true == 0))
-    fp = np.sum((y_pred == 1) & (y_true == 0))
-    fn = np.sum((y_pred == 0) & (y_true == 1))
-
-    if tp + fp == 0 or tp + fn == 0:
-        precision = 0.0
-        recall = 0.0
-        f1 = 0.0
+    x_pred, x_real = x_pred.astype(int), x_real.astype(int) 
+    tp = len(np.where(x_pred[np.where(x_real == 1)] == 1)[0])
+    tn = len(np.where(x_pred[np.where(x_real == 0)] == 0)[0])
+    fp = len(np.where(x_pred[np.where(x_real == 0)] == 1)[0])
+    fn = len(np.where(x_pred[np.where(x_real == 1)] == 0)[0])
+    if (tp + fp) * (tp + fn) * tp:
+        precision, recall = tp / (tp + fp), tp / (tp + fn)
+        f1 = 2 * precision * recall / (precision + recall) 
+    elif sum(x_pred - x_real):
+        f1 = 0.
     else:
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
-        f1 = 2 * precision * recall / (precision + recall) if (precision + recall) != 0 else 0.0
-
-    accuracy = (tp + tn) / (tp + tn + fp + fn) * 100 if (tp + tn + fp + fn) != 0 else 0.0
-
+        f1 = 1.
+    if (tp + tn + fp + fn):
+        accuracy = (tp + tn) / (tp + tn + fp + fn) * 100
+    else:
+        accuracy = 0.
     return f1, accuracy
