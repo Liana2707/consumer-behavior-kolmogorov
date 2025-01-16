@@ -56,6 +56,6 @@ def lzw_compress(text, dict_size=256):
             dictionary[new_string] = dict_size
             dict_size += 1
             string = symbol
-    if string:  # Проверка на пустую строку
+    if string: 
         compressed_data.append(dictionary[string])
     return compressed_data, dictionary

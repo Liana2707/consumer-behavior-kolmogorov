@@ -7,6 +7,15 @@ def binary_to_hex(row):
     decimal_value = int(binary_string, 2)
     return hex(decimal_value)[2:]
 
+def encode_row(row):
+    s =  ' '.join(map(str, row))
+    mapping = {str(-2 + i): i for i in range(10)}
+    decimal_value = 0
+    parts = s.split()  
+    for i, part in enumerate(parts):
+        decimal_value += mapping[part] * (10**(len(parts) - i - 1))  
+    return decimal_value
+
 
 def create_dataset(time_series, lzw_depth, forecast_horizon):
     """
