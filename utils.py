@@ -1,13 +1,28 @@
 import numpy as np
 from scipy.linalg import hankel
 
+def binary_to_char(row, char_set="0123456789abcdefghijklmnopqrstuvwxyz"):
+    """
+    Преобразует бинарный список (строку из 0 и 1) в символ из заданного набора.
+    Использует хеширование с остатком от деления.
+    
+    row: список из 0 и 1
+    char_set: набор символов для использования при кодировании
+    """
+
+    binary_string = ''.join(map(str, row))
+    int_value = int(binary_string, 2) 
+    char_index = int_value % len(char_set) 
+    return char_set[char_index]
 
 def binary_to_hex(row):
+    """ Переводит бинарный список в символ 16-ричного алфавита. """
     binary_string = ''.join(map(str, row))
     decimal_value = int(binary_string, 2)
     return hex(decimal_value)[2:]
 
 def encode_row(row):
+    """ Кодирует строку в десятичное числовое представление. """
     s =  ' '.join(map(str, row))
     mapping = {str(-2 + i): i for i in range(10)}
     decimal_value = 0
